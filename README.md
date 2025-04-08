@@ -11,7 +11,7 @@ Usage:
         -v /srv/mongo:/data/db \ 
         -e MONGOD_OPTIONS='--nojournal --smallfiles --noprealloc --auth' \
         -e MONGO_ROOT_PASSWORD=qwerty \
-        arkadi/mongodb \
+        mongodb_2.6 \
         /sbin/my_init -- bash -l
 
 - You may skip MONGOD_OPTIONS or set your own.
