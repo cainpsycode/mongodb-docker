@@ -41,9 +41,6 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD mongo --eval 'db.runCommand("ping").ok' || exit 1
 
-# Verify entrypoint exists
-RUN [ -f /usr/local/bin/docker-entrypoint.sh ] || { echo "Entrypoint script missing!"; exit 1; }
-
 # Runtime configuration
 USER mongo
 WORKDIR ${MONGO_DATA}
