@@ -1,5 +1,10 @@
 #### MongoDB 2.6 Docker image
 
+Warn:
+docker-entrypoint.sh на Windows — файл может содержать CRLF (\r\n), а не LF (\n). 
+Это может привести к ошибке no such file or directory, даже если файл существует.
+Нужно его открыть в VSCode: Правка > Конвертировать окончания строк > LF
+
 Build:
 ```sh
 docker build -t 'cainpsycode/mongo' .
