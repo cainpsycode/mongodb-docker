@@ -21,16 +21,17 @@ echo "Creating root user in MongoDB..."
 js="if (!db.getUser('root')) {
   db.createUser({
     user: 'root',
-    pwd: $MONGO_ROOT_PASSWORD,
+    pwd: '$MONGO_ROOT_PASSWORD',
     roles: [ 'userAdminAnyDatabase', 'readWriteAnyDatabase' ]
   });
 } else {
   print('User root already exists');
 }"
+
 mongo admin --eval "$js"
 
 # Останавливаем Mongo
 mongod --shutdown
 
 # Запускаем заново в foreground (теперь можно с авторизацией, если хочешь)
-exec mongod --auth
+exec mongod $MONGO_OPTIONS
