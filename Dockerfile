@@ -34,11 +34,15 @@ RUN set -ex; \
     rm -rf /var/lib/apt/lists/*
 
 # Copy entrypoint script
-COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Healthcheck to verify MongoDB is running
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD mongo --eval 'db.runCommand("ping").ok' || exit 1
+
+# Verify entrypoint exists
+RUN [ -f /usr/local/bin/docker-entrypoint.sh ] || { echo "Entrypoint script missing!"; exit 1; }
 
 # Runtime configuration
 USER mongo
