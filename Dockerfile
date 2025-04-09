@@ -1,15 +1,39 @@
-FROM  alpine:3.14
-RUN apk add --update \
+FROM debian:bullseye-slim
+
+ENV MONGO_VERSION=2.6.7
+ENV MONGO_URL=https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGO_VERSION}.tgz
+
+# Установка зависимостей
+RUN apt-get update && apt-get install -y \
     curl \
+    ca-certificates \
     tar \
-    && rm -rf /var/cache/apk/*
-RUN curl -sS https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.6.7.tgz \
-        | tar xz --no-same-owner -C /usr/local --strip-components 1 --wildcards -f - \*/bin/\* \
-    && mkdir -p /etc/service/mongod \
-    && addgroup --system mongodb \
-    && adduser --system -g mongodb mongodb
-ADD mongod.sh /etc/service/mongod/run
-ADD mongo-admin.sh /etc/my_init.d/90_mongo-admin.sh
-RUN rm -f /etc/service/sshd/down
-VOLUME /data/db
+    gnupg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Создание пользователя
+RUN groupadd -r mongo && useradd -r -g mongo -s /usr/sbin/nologin mongo
+
+# Скачивание и установка MongoDB
+RUN curl -L $MONGO_URL -o /tmp/mongodb.tgz && \
+    mkdir -p /tmp/mongodb && \
+    tar -xzf /tmp/mongodb.tgz -C /tmp/mongodb --strip-components=1 && \
+    cp /tmp/mongodb/bin/* /usr/local/bin/ && \
+    chmod +x /usr/local/bin/* && \
+    rm -rf /tmp/mongodb /tmp/mongodb.tgz
+
+# Копируем entrypoint-скрипт
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Создаём каталог для данных
+RUN mkdir -p /data/db && chown -R mongo:mongo /data/db
+RUN mkdir -p /var/log && chown mongo:mongo /var/log
+USER mongo
+WORKDIR /data/db
+
 EXPOSE 22 27017
+
+# Выполнение entrypoint с передачей окружения
+CMD ["sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
