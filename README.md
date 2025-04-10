@@ -12,7 +12,7 @@ docker build -t 'cainpsycode/mongo' .
 
 Usage: 
 ```sh
-docker run -ti --rm -p 27017:27017 -v d:/mongodb/test:/data/db -e MONGO_ROOT_PASSWORD=qwerty -e MONGO_OPTIONS='--auth' cainpsycode/mongo
+docker run -ti --rm -p 27017:27017 -v d:/mongodb/test:/data/db -e MONGO_ROOT_PASSWORD=qwerty -e MONGO_OPTIONS='--auth --smallfiles' cainpsycode/mongo
 ```
 
 - You may skip MONGOD_OPTIONS or set your own.
