@@ -2,7 +2,7 @@
 set -e
 
 # Стартуем mongod без авторизации (в фоне)
-mongod --fork --logpath /var/log/mongod.log
+mongod --fork --logpath /var/log/mongod.log --smallfiles
 
 # Ждём, пока mongod поднимется
 sleep 5
